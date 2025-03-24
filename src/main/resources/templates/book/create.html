@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+
+  <div class="title_line">도서 등록</div>
+  
+  <aside class="aside_right">
+    <a href="javascript: location.reload();">새로 고침</a>
+  </aside>
+  
+  <div th:replace="~{book/list_search_com::list_search_fragment}"></div>
+  
+  <div class="menu_line"></div>
+  
+  <div style="width:50%; margin:0px auto;">
+    <form name="frm" method="post" action="/book/create" th:object="${bookinfoVO}">
+      <div>
+        <label>도서 이름</label>
+        <input type="text" name="bookname" value="" autofocus="autofocus"
+              class="form-control fom-control-sm" style="width: 50%;" th:field="*{bookname}">
+        <div th:if="${#fields.hasErrors('bookname')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err: ${#lists.sort(#fields.errors('bookname'))}" th:text="${err}"></div>
+        </div>  
+      </div>
+      
+      <div>
+        <label>작가</label>
+        <input type="text" name="writer" value=""
+              class="form-control fom-control-sm" style="width: 50%;" th:field="*{writer}">
+        <div th:if="${#fields.hasErrors('writer')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err: ${#lists.sort(#fields.errors('writer'))}" th:text="${err}"></div>
+        </div>  
+      </div>
+
+      <div>
+        <label>출간일</label>
+        <input type="date" name="bookpdate" value=""
+              class="form-control fom-control-sm" style="width: 50%;" th:field="*{bookpdate}">
+        <div th:if="${#fields.hasErrors('bookpdate')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err: ${#lists.sort(#fields.errors('bookpdate'))}" th:text="${err}"></div>
+        </div>  
+      </div>
+
+      <div>
+        <label>도서 가격</label>
+        <input type="number"name="bookprice" value="" min="0"
+              class="form-control fom-control-sm" style="width: 50%;" th:field="*{bookprice}">
+        <div th:if="${#fields.hasErrors('bookprice')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err: ${#lists.sort(#fields.errors('bookprice'))}" th:text="${err}"></div>
+        </div>  
+      </div>
+
+      <div class="content_body_bottom">
+        <button type="submit" class="btn btn-secondary btn-sm">등록</button>
+        <button type="button" onclick="location.href='./list_search'" class="btn btn-secondary btn-sm">목록</button>
+      </div>
+      
+    </form>  
+  </div>
+</div>
+</html>

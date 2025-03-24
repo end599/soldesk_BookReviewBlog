@@ -1,0 +1,82 @@
+<div th:fragment="navbarFragment">
+
+  
+  <header class="p-3 mb-3 border-bottom">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+          <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"/></svg>
+        </a>
+
+        <ul style=" align-items : center;" class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+        
+          <!-- /* HOME 이동 */ -->
+          <li><a href="/" class="nav-link px-2 link-secondary" style="font-size:20px;">HOME</a></li>
+          <!-- /* HOME 이동 */ -->
+        
+          
+          <!-- /* 대분류/중분류 시작 */ -->
+          <li class="nav-item dropdown" th:each="bookinfoVOMenu:${menu}">
+          
+            <!--/* 대분류 */-->
+            <a class="nav-link px-2 link-body-emphasis" href="#" id="navbarDropdownMenuLink" 
+                 role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="${bookinfoVOMenu.bookclass}">                                          
+            </a>
+        
+            <!--/* 중분류 */-->
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <li th:each="bookinfoVO:${bookinfoVOMenu.list_name}"><a class="dropdown-item" th:href="@{|/review/list_by_bookno?bookno=${bookinfoVO.bookno}|}" th:text="${bookinfoVO.bookname}"></a></li> 
+            </ul>
+            
+          </li>
+          <!-- /* 대분류/중분류 끝 */ -->
+
+          <!-- /* 관리자 목록 */ -->
+          <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
+          
+            <a class="nav-link px-2 link-body-emphasis" href="#" id="navbarDropdownMenuLink" 
+            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="관리자">                                                            
+            </a>
+          
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <li><a class="dropdown-item" th:href="@{|/users/list|}">회원목록</a></li>
+              <li><a class="dropdown-item" th:href="@{|/book/list_search?word=${word}|}">도서 목록</a></li>
+              <li><a class="dropdown-item" th:href="@{|/review/list_all|}">글 목록</a></li>
+            </ul>
+            
+          </li>
+          <!-- /* 관리자 목록 */ -->
+        </ul>
+
+
+
+
+
+
+
+
+
+        <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+          <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
+        </form>
+        
+        
+        <!--/* 회원 기능 */-->
+        <div class="dropdown text-end">
+          <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="/images/unknown.png" alt="mdo" width="32" height="32" class="rounded-circle">
+          </a>
+          <ul class="dropdown-menu text-small">
+            <li th:if="${session.userno == null}"><a class="dropdown-item"  href="/users/login" th:text="@{|로그인|}" style="text-decoration: none;"></a></li>
+            <li th:if="${session.userno != null}"><a class="dropdown-item" href="/users/logout" th:text="@{|${session.userid} 로그아웃|}" style="text-decoration: none;"></a></li>
+            <li th:if="${session.userno == null}"><a class="dropdown-item" th:href="@{|/users/create|}" style="text-decoration: none;">회원가입</a></li>
+            <li th:if="${session.userno != null}"><a class="dropdown-item" href="/users/passwd_update">프로필</a></li>
+            <li th:if="${session.userno != null}"><a class="dropdown-item" href="/users/test">프로필</a></li>
+          </ul>
+        </div>
+        <!--/* 회원 기능 */-->
+        
+      </div>
+    </div>
+  </header>
+</div>

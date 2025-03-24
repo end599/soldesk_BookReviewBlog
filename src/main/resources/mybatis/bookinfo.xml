@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.mvc.bookinfo.BookinfoDAOInter"> <!-- SB가 자동으로 구현하여 연동하는 interface -->
+  <!-- 도서 추가 쿼리 -->
+  <insert id="create" parameterType="dev.mvc.bookinfo.BookinfoVO">
+    insert into book_info(BOOKNO, BOOKCLASS,BOOKNAME, WRITER, BOOKPDATE, BOOKPRICE)
+    VALUES(bookinfo_seq.nextval, #{bookclass},#{bookname}, #{writer}, #{bookpdate}, #{bookprice})
+  </insert>
+  
+  <!-- SQL -> BookinfoVO 객체 레코드 수 만큼 생성 -> ArrayList<BookinfoVO> 객체 생성되어 BookinfoDAOInter로 리턴
+  <select id="list_all" resultType="dev.mvc.bookinfo.BookinfoVO">
+    SELECT BOOKNO, BOOKNAME, WRITER, BOOKPDATE, BOOKPRICE, SEQNO
+    FROM book_info
+    ORDER BY SEQNO ASC, BOOKNO
+  </select>
+   -->
+   
+  <!-- SQL -> BookinfoVO 객체 레코드 수 만큼 생성 -> ArrayList<BookinfoVO> 객체 생성되어 BookinfoDAOInter로 리턴 -->
+  <!-- 특정 데이터 가져오기 -->
+  <select id="read" resultType="dev.mvc.bookinfo.BookinfoVO" parameterType="Integer">
+
+    
+    SELECT bi.BOOKNO, bkl.KEYNAME as BOOKKEY, bi.BOOKNAME, bi.WRITER, bi.BOOKPDATE, bi.BOOKPRICE, bi.SEQNO, bi.VISIBLE
+    FROM book_info bi JOIN book_keyword_list bkl 
+    ON bi.BOOKCLASS = bkl.keyno
+    WHERE bi.bookno=#{bookno}
+    
+    
+  </select>
+  
+  <!-- 특정 데이터 수정 -->
+  <update id="update" parameterType="dev.mvc.bookinfo.BookinfoVO">
+    UPDATE book_info
+    SET bookname=#{bookname}, writer=#{writer}, bookpdate=#{bookpdate}, bookprice=#{bookprice}
+    where bookno=#{bookno}
+  </update>
+  
+  <!-- 삭제할 테이블이 참조하는 행 수, 구현중 -->
+  <select id = "delete_count" resultType="int" parameterType="Integer">
+    SELECT count(*)
+    FROM book_info info
+    JOIN book_review re 
+    ON info.bookno = re.bookno
+    WHERE info.bookno=#{bookno}
+  </select>
+  
+  <!-- 특정 데이터 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM book_info
+    WHERE bookno=#{bookno}
+  </delete>
+  
+  <!-- 우선순위 높임 -->
+  <update id="update_seqno_forward" parameterType="Integer">
+    UPDATE book_info 
+    SET seqno=seqno - 1 
+    WHERE bookno=#{bookno}
+  </update>
+  
+  <!-- 우선순위 낮춤 -->
+  <update id="update_seqno_backward" parameterType="Integer">
+    UPDATE book_info 
+    SET seqno=seqno + 1 
+    WHERE bookno=#{bookno}
+  </update>
+  
+  <!-- 정렬 순서 변경, 전체 데이터 호출-->
+  <select id="list_all" resultType="dev.mvc.bookinfo.BookinfoVO">
+    SELECT BOOKNO, BOOKNAME, WRITER, BOOKPDATE, BOOKPRICE, SEQNO
+    FROM book_info
+    ORDER BY SEQNO ASC
+  </select>
+  
+  <!-- 카테고리 공개 설정 -->
+  <update id="update_visible_y" parameterType="Integer">
+    UPDATE book_info 
+    SET visible = 'Y'
+    WHERE bookno=#{bookno}
+  </update>
+  
+  <!-- 카테고리 비공개 설정 -->
+  <update id="update_visible_n" parameterType="Integer">
+    UPDATE book_info 
+    SET visible = 'N'
+    WHERE bookno=#{bookno}
+  </update>
+  
+  <!-- 숨긴 '카테고리 그룹'을 제외하고 접속자에게 공개할 '카테고리 그룹' 출력 -->
+  <select id="list_all_bookgrp_y" resultType="dev.mvc.bookinfo.BookinfoVO">
+    SELECT bi.BOOKNO, bkl.KEYNAME as BOOKKEY, bi.BOOKNAME, bi.WRITER, bi.BOOKPDATE, bi.BOOKPRICE, bi.SEQNO, bi.VISIBLE
+    FROM book_info bi JOIN book_keyword_list bkl 
+    ON bi.BOOKCLASS = bkl.keyno
+    WHERE bi.VISIBLE = 'Y'
+    ORDER BY bi.SEQNO ASC
+  </select>
+  
+  <!-- 숨긴 '카테고리 그룹'을 제외하고 접속자에게 공개할 '카테고리' 출력 -->
+  <select id="list_all_book_y" resultType="dev.mvc.bookinfo.BookinfoVO" parameterType="String">
+
+    
+    SELECT bi.BOOKNO, bkl.KEYNAME as BOOKKEY, bi.BOOKNAME, bi.WRITER, bi.BOOKPDATE, bi.BOOKPRICE, bi.SEQNO, bi.VISIBLE
+    FROM book_info bi JOIN book_keyword_list bkl 
+    ON bi.BOOKCLASS = bkl.keyno
+    WHERE bi.VISIBLE = 'Y' AND bkl.KEYNAME=#{bookkey}
+    ORDER BY bi.SEQNO ASC
+  </select>
+  
+  <!-- 장르 목록 -->
+  <select id="genreset" resultType="String">
+    SELECT BOOKNAME FROM book_info WHERE BOOKNAME='--' ORDER BY seqno ASC
+  </select>
+  
+  <!-- 검색 -->
+  <select id="list_search" resultType="dev.mvc.bookinfo.BookinfoVO" parameterType="String">
+    SELECT BOOKNO, BOOKNAME, WRITER, BOOKPDATE, BOOKPRICE, SEQNO, VISIBLE
+    FROM book_info
+    <if test="word != null and word != ''"> <!-- 검색 상태라면 WHERE 생성-->
+    WHERE (UPPER(bookname) LIKE '%' || UPPER(#{word}) || '%')
+    OR (UPPER(writer) LIKE '%' || UPPER(#{word}) || '%')
+    </if>
+    ORDER BY seqno ASC
+  </select>
+  
+  <!-- 검색 갯수 -->
+  <select id="list_search_count" resultType="Integer" parameterType="String">
+    SELECT count(*) as cnt
+    FROM book_info
+    <if test="word != null and word != ''"> <!-- 검색 상태라면 WHERE 생성-->
+    WHERE (UPPER(bookname) LIKE '%' || UPPER(#{word}) || '%')
+    OR (UPPER(writer) LIKE '%' || UPPER(#{word}) || '%')
+    </if>
+    ORDER BY seqno ASC
+  </select>
+  
+  <!-- 검색 + 페이징 -->
+  <select id="list_search_paging" resultType="dev.mvc.bookinfo.BookinfoVO" parameterType="Map">
+    SELECT bookno, bookkey, bookname, writer, bookpdate, BOOKPRICE, seqno, visible, r
+    FROM (
+        SELECT bookno, bookkey, bookname, writer, bookpdate, BOOKPRICE, seqno, visible, rownum as r
+        FROM (
+        
+            SELECT bi.bookno, bkl.keyname as bookkey, bi.bookname, bi.writer, bi.bookpdate, bi.BOOKPRICE, bi.seqno, bi.visible
+            FROM book_info bi join book_keyword_list bkl on bi.BOOKCLASS = bkl.keyno
+            WHERE (UPPER(bi.bookname) LIKE '%' || UPPER(#{word}) || '%') OR (UPPER(bi.writer) LIKE '%' || UPPER(#{word}) || '%')
+            ORDER BY bi.seqno ASC
+        )
+    )
+    WHERE r &gt;=#{start_num} AND r &lt;=#{end_num}<!-- WHERE r >= 1 AND r <= 3 -->
+  </select>
+  
+
+ 
+</mapper>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+  <div class="title_line">태그의 초기값 및 입력값 제한</div>
+  
+  <div class="flex_div_center" style="width: 90%; margin: 0px auto;">  
+    <form name="frm" method="post" action="/tag/init">
+    
+      <div class="content_body_bottom">
+        <label>
+          <input type="radio" name="radio_value" value="Y" th:checked="${radio_value=='Y'}">구독 설정(Yes)
+        </label>&nbsp;
+        <label>
+          <input type="radio" name="radio_value" value="N" th:checked="${radio_value=='N'}">구독 취소(No)
+        </label>
+      </div>
+      
+      <div class="content_body_bottom">
+        <label>
+          <input type="checkbox" name="code1" value="CODE1" th:checked="${isCode1? 'checked':null}">서울
+        </label>
+        <label>
+          <input type="checkbox" name="code2" value="CODE2" th:checked="${isCode2? 'checked':null}">인천
+        </label>
+        <label>
+          <input type="checkbox" name="code3" value="CODE3" th:checked="${isCode3? 'checked':null}">경기
+        </label>
+      </div>
+      
+      <div class ="content_body_bottom">
+        <button type="submit" class="btn btn-primary btn-sm">저장</button>
+      </div>
+      
+    </form>
+  </div>  
+</div>
+</html>
+

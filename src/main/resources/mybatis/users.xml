@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- SB가 자동으로 구현하여 연동하는 interface -->
+<mapper namespace="dev.mvc.users.UsersDAOInter"> <!-- SB가 자동으로 구현하여 연동하는 interface -->
+  <select id="checkID" resultType="int" parameterType="String">
+    SELECT COUNT(userid) as cnt
+    FROM users
+    WHERE userid=#{userid}
+  </select>
+  
+  <insert id="create" parameterType="dev.mvc.users.UsersVO">
+    INSERT INTO users(userno, userid, upasswd, uname, tel, zipcode, address1, address2, join_date, grade)
+    VALUES (users_seq.nextval, #{userid}, #{upasswd}, #{uname}, #{tel}, #{zipcode}, 
+                 #{address1}, #{address2}, sysdate, #{grade})
+  </insert>
+
+  <select id="list" resultType="dev.mvc.users.UsersVO">
+    SELECT userno, userid, upasswd, uname, tel, zipcode, address1, address2, join_date, grade
+    FROM users
+    ORDER BY grade ASC, userid ASC
+  </select>
+  
+  <!-- userno로 회원 정보 조회 -->
+  <select id="read" resultType="dev.mvc.users.UsersVO" parameterType="int">
+    SELECT userno, userid, upasswd, uname, tel, zipcode, address1, address2, join_date, grade
+    FROM users
+    WHERE userno = #{userno}
+  </select>  
+
+  <!-- userid(이메일)로 회원 정보 조회 -->
+  <select id="readById" resultType="dev.mvc.users.UsersVO" parameterType="String">
+    SELECT userno, userid, upasswd, uname, tel, zipcode, address1, address2, join_date, grade
+    FROM users
+    WHERE userid = #{userid}
+  </select>
+  
+  <update id="update" parameterType="dev.mvc.users.UsersVO">
+    UPDATE users 
+    SET uname=#{uname}, tel=#{tel}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}
+    WHERE userno=#{userno}
+  </update>
+  
+  <delete id="delete" parameterType="int">
+    DELETE FROM users
+    WHERE userno=#{userno}
+  </delete>
+
+  <!-- 로그인 -->
+  <select id="login" resultType="int" parameterType="HashMap">
+    SELECT COUNT(userno) as cnt
+    FROM users
+    WHERE userid=#{userid} AND upasswd=#{upasswd}
+  </select>
+  
+  <!--  현재 패스워드 검사 -->
+  <select id="passwd_check" parameterType="HashMap" resultType="int">
+    SELECT COUNT(userno) as cnt
+    FROM users
+    WHERE userno=#{userno} AND upasswd=#{current_passwd}
+  </select>
+   
+  <!-- 패스워드 변경 -->
+  <update id="passwd_update" parameterType="HashMap">
+    UPDATE users
+    SET upasswd=#{current_passwd}
+    WHERE userno=#{userno}
+  </update>
+  
+  
+<!-- 도서 추가 쿼리 -->
+<!-- <update id="profile" parameterType="dev.mvc.bookinfo.BookinfoVO">
+    update book_info
+    set uname=#{}, tel=#{}, zipcode=#{}, address1=#{}, address2=#{}
+    where 
+    (BOOKNO, BOOKCLASS,BOOKNAME, WRITER, BOOKPDATE, BOOKPRICE)
+    VALUES(bookinfo_seq.nextval, #{bookclass},#{bookname}, #{writer}, #{bookpdate}, #{bookprice})
+  </update>
+ --> 
+  
+  
+</mapper>

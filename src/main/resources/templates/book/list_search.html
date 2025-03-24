@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+  <div class="title_line">
+  도서 목록 <span th:if="${word != null and word != ''}" th:text="|${word} : ${search_cnt} 건|"></span>
+  </div>
+  
+  <aside class="aside_right">
+    <a href="javascript:location.reload();">새로고침</a>
+  </aside>
+  
+  <div th:replace="~{book/list_search_com::list_search_fragment}"></div>
+  
+  <div class="menu_line"></div> 
+
+  <div class="panel_div_center">
+    <!--/* list_search.html 테스트 시작 */-->
+    
+    <!--/* list_search.html 테스트 끝 */-->
+    
+    <form name="frm" method="post" action="/book/create" th:object="${bookinfoVO}"> <!--/*  display: flex; align-items: center; justify-content: center; */-->
+      
+      <div style="margin-right: 5px; width:8%;">
+        <select name="bookclass" class="form-control" style="width: 100%;">
+          <option value="" disabled selected>장르</option>
+          <option value="1">좀비</option>
+          <option value="2">핵</option>
+          <option value="3">외계인</option>
+          <option value="4">전염병</option>
+          <option value="5">EMP</option>
+          <option value="6">기후위기</option>
+        </select>
+      </div>
+      
+      <div style="margin-right: 5px; width:20%;">
+        <input type="text" name="bookname" value="" autofocus="autofocus"
+              class="form-control" style="width: 100%;" th:field="*{bookname}" placeholder="도서명">
+      </div>
+      
+      <div style="margin-right: 5px; width:20%;">
+        <input type="text" name="writer" value=""
+              class="form-control" style="width: 100%;" th:field="*{writer}" placeholder="작가">
+      </div>
+
+      <div style="margin-right: 5px; width:15%;">
+        <input type="date" name="bookpdate" value=""
+              class="form-control" style="width: 100%;" th:field="*{bookpdate}" placeholder="출간일">
+      </div>
+
+      <div style="margin-right: 5px; width:10%;">
+        <input type="number" name="bookprice" value="" min="0"
+              class="form-control" style="width: 100%;" th:field="*{bookprice}" placeholder="가격">
+      </div>
+
+      <div style="margin-right: 5px; width:13%;">
+        <button type="submit" class="btn btn-secondary">등록</button>
+        <button type="reset" class="btn btn-secondary">취소</button>
+      </div>
+      
+    </form>  
+  </div>
+
+
+
+
+
+  <div th:replace="~{book/list_all_com::list_all_fragment}"></div>
+</div>
+</html>
